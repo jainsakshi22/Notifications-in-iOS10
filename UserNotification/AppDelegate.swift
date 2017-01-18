@@ -30,6 +30,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
             }
         }
+        
+        //Add action and category for actions to category
+        let action = UNNotificationAction(identifier: "remindLater", title: "Remind me Later", options: [])
+        let category = UNNotificationCategory(identifier: "reminderCategory", actions: [action], intentIdentifiers: [], options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([category])
+        
         return true
     }
 
@@ -69,12 +75,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationContent.title = "Reminder"
         notificationContent.body = "Reminder text"
         notificationContent.sound = UNNotificationSound.default()
+        notificationContent.categoryIdentifier = "reminderCategory"
+        
+        if let path = Bundle.main.path(forResource: "notificationLogo", ofType: "png") {
+            
+            let url = URL(fileURLWithPath: path)
+            // The initializer for UNNotificationAttachment is marked as throwing, so we include a catch block to handle any errors.
+            do {
+                let attachment = try UNNotificationAttachment(identifier: "notificationLogo", url: url, options: nil)
+                notificationContent.attachments  = [attachment]
+            } catch {
+                print("The attachment was not loaded.")
+            }
+        }
+        
         
         //creating a notification request
         
         let notificationRequest = UNNotificationRequest(identifier: "textNotification", content: notificationContent, trigger: notificationTrigger)
         
-        
+        UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         
         //Add the request to the notification center that manages all notifications for your app
@@ -85,5 +105,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        if response.actionIdentifier == "remindLater" {
+            let newDate = Date(timeInterval: 900, since: Date()) //60 seconds * 15 minutes
+            scheduleNotificationTime(newDate)
+        }
+    }
 }
 
