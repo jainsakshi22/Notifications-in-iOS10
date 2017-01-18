@@ -20,6 +20,10 @@ class ViewController: UIViewController {
     }
 
     @IBAction func dateSelected(_ sender: UIDatePicker) {
+        
+        let selectedDate = sender.date
+        let delegate = UIApplication.shared.delegate as? AppDelegate
+        delegate?.scheduleNotificationTime(selectedDate)
     }
 }
 

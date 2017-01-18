@@ -17,6 +17,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .alert]) { (accepted, error) in
+            
+            if (!accepted) {
+//                let alertController = UIAlertController(title: "", message: "You can enable notifications in settings tab", preferredStyle: .alert)
+//                
+//                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+//                alertController.addAction(defaultAction)
+//                
+//                self.window?.rootViewController?.present(alertController, animated: true, completion: nil);
+                print("Notifications access denied")
+                
+            }
+        }
         return true
     }
 
